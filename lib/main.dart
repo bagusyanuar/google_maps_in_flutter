@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_in_flutter/google_map_sample.dart';
 import 'package:google_maps_in_flutter/map_sample.dart';
+import 'package:google_maps_in_flutter/view/login.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: GoogleMapSample(),
+      home: Login(),
     );
   }
 }
