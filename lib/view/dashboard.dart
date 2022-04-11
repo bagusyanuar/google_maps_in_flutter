@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_in_flutter/controller/mapping.dart';
 import 'package:google_maps_in_flutter/dummy/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,10 +44,15 @@ class _DashboardState extends State<Dashboard> {
               },
             )),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _getListODC,
+        label: Text('To the lake!'),
+        icon: Icon(Icons.directions_boat),
+      ),
     );
   }
 
-  void _createMarker(List<Map<String, dynamic>> odc) {
+  void _createMarker(List<dynamic> odc) {
     setState(() {
       _markers.add(
         Marker(
@@ -58,15 +65,22 @@ class _DashboardState extends State<Dashboard> {
 
       odc.forEach((element) {
         print("create other marker");
-        LatLng _pos = LatLng(
-            element["lat"] as double, element["long"] as double);
+        String id = element["id"].toString();
+        String name = element["nama"] as String;
+        LatLng _pos =
+            LatLng(element["latitude"] as double, element["longitude"] as double);
         _markers.add(
           Marker(
-            markerId: MarkerId(element["id"] as String),
+            markerId: MarkerId(id),
             position: _pos,
             icon: BitmapDescriptor.defaultMarkerWithHue(
                 BitmapDescriptor.hueViolet),
-                
+            infoWindow: InfoWindow(
+              title: name,
+            ),
+            onTap: (){
+              print("Tapped");
+            }
           ),
         );
       });
@@ -86,10 +100,15 @@ class _DashboardState extends State<Dashboard> {
           target: currentCenter,
         );
       });
-      List<Map<String, dynamic>> _listODC = DataDummy.DummyMapping;
-      _createMarker(_listODC);
+      List<dynamic> _data = await ListODC();
+      _createMarker(_data);
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  void _getListODC() async {
+    List<dynamic> _list = await ListODC();
+    print(_list);
   }
 }
