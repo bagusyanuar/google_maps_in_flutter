@@ -30,10 +30,15 @@ class _DashboardState extends State<Dashboard> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Container(
+      body: Stack(
+        children: [
+          Container(
             height: MediaQuery.of(context).size.height,
             child: GoogleMap(
               mapType: MapType.normal,
@@ -42,13 +47,97 @@ class _DashboardState extends State<Dashboard> {
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
-            )),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Container(
+                height: 60,
+                width: 130,
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(right: 5),
+                      child: Icon(
+                        Icons.location_on,
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
+                    Text(
+                      "ODC Terdekat",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/search");
+                  },
+                  child: Container(
+                    height: 50,
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        width: 1,
+                        color: Colors.black54.withOpacity(0.3),
+                      ),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(right: 10),
+                          child: Icon(
+                            Icons.search,
+                            size: 24,
+                            color: Colors.black54.withOpacity(0.5),
+                          ),
+                        ),
+                        Text(
+                          "Cari ODC...",
+                          style: TextStyle(
+                            color: Colors.black54.withOpacity(0.5),
+                            fontSize: 14,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _getListODC,
-        label: Text('To the lake!'),
-        icon: Icon(Icons.directions_boat),
-      ),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: _getListODC,
+      //   label: Text('To the lake!'),
+      //   icon: Icon(Icons.directions_boat),
+      // ),
     );
   }
 
@@ -67,21 +156,20 @@ class _DashboardState extends State<Dashboard> {
         print("create other marker");
         String id = element["id"].toString();
         String name = element["nama"] as String;
-        LatLng _pos =
-            LatLng(element["latitude"] as double, element["longitude"] as double);
+        LatLng _pos = LatLng(
+            element["latitude"] as double, element["longitude"] as double);
         _markers.add(
           Marker(
-            markerId: MarkerId(id),
-            position: _pos,
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueViolet),
-            infoWindow: InfoWindow(
-              title: name,
-            ),
-            onTap: (){
-              print("Tapped");
-            }
-          ),
+              markerId: MarkerId(id),
+              position: _pos,
+              icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueViolet),
+              infoWindow: InfoWindow(
+                title: name,
+              ),
+              onTap: () {
+                print("Tapped");
+              }),
         );
       });
     });
@@ -100,7 +188,7 @@ class _DashboardState extends State<Dashboard> {
           target: currentCenter,
         );
       });
-      List<dynamic> _data = await ListODC();
+      List<dynamic> _data = await getListODC('');
       _createMarker(_data);
     } catch (e) {
       print(e.toString());
@@ -108,7 +196,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _getListODC() async {
-    List<dynamic> _list = await ListODC();
+    List<dynamic> _list = await getListODC('');
     print(_list);
   }
 }

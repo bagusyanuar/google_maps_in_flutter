@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_in_flutter/google_map_sample.dart';
 import 'package:google_maps_in_flutter/map_sample.dart';
 import 'package:google_maps_in_flutter/view/dashboard.dart';
+import 'package:google_maps_in_flutter/view/detail.dart';
 import 'package:google_maps_in_flutter/view/login.dart';
+import 'package:google_maps_in_flutter/view/search.dart';
+import 'package:google_maps_in_flutter/view/splash.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,8 +31,11 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: '/',
       routes: {
-        "/": (context) => Login(),
+        "/": (context) => SplashScreen(),
+        "/login": (context) => Login(),
         "/dashboard": (context) => Dashboard(),
+        "/search": (context) => SearchView(),
+        "/detail": (context) => DetailPage(),
       },
     );
   }
