@@ -33,6 +33,7 @@ class _DashboardState extends State<Dashboard> {
   void dispose() {
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,33 +54,38 @@ class _DashboardState extends State<Dashboard> {
             alignment: Alignment.bottomLeft,
             child: Padding(
               padding: const EdgeInsets.all(20),
-              child: Container(
-                height: 60,
-                width: 130,
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(right: 5),
-                      child: Icon(
-                        Icons.location_on,
-                        color: Colors.white,
-                        size: 25,
+              child: GestureDetector(
+                onTap: () {
+                  _getNearestODC(context);
+                },
+                child: Container(
+                  height: 60,
+                  width: 130,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(right: 5),
+                        child: Icon(
+                          Icons.location_on,
+                          color: Colors.white,
+                          size: 25,
+                        ),
                       ),
-                    ),
-                    Text(
-                      "ODC Terdekat",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
+                      Text(
+                        "ODC Terdekat",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -195,8 +201,15 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  void _getListODC() async {
-    List<dynamic> _list = await getListODC('');
-    print(_list);
+  void _getNearestODC(BuildContext context) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    double lat = preferences.getDouble("latitude") ?? -7.5589494045543475;
+    double long = preferences.getDouble("longitude") ?? 110.85658809673708;
+    Map<String, dynamic> _data = await getNearestODC(lat, long);
+    print(_data);
+    int id = _data["id"] as int;
+    Navigator.pushNamedAndRemoveUntil(
+        context, "/detail", ModalRoute.withName("/dashboard"),
+        arguments: id);
   }
 }

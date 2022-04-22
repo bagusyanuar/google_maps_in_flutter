@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_in_flutter/GoogleMapService.dart';
 import 'package:google_maps_in_flutter/component/page-loading.dart';
 import 'package:google_maps_in_flutter/controller/mapping.dart';
 import 'package:google_maps_in_flutter/dummy/data.dart';
@@ -19,15 +20,17 @@ class _DetailPageState extends State<DetailPage> {
   bool isLoading = true;
 
   Completer<GoogleMapController> _controller = Completer();
+  GoogleMapService _googleMapService = GoogleMapService();
   CameraPosition _initialPosition =
       CameraPosition(target: ExampleCenter, zoom: 15);
 
-  final Set<Marker> _markers = {};
+  Set<Marker> _markers = {};
   LatLng center = ExampleCenter;
+  final Set<Polyline> _polyLines = {};
+  Set<Polyline> get polyLines => _polyLines;
 
   @override
   void initState() {
-    // TODO: implement initState
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       int id = ModalRoute.of(context)!.settings.arguments as int;
       print("Argument Value " + id.toString());
@@ -60,6 +63,7 @@ class _DetailPageState extends State<DetailPage> {
                         mapType: MapType.normal,
                         initialCameraPosition: _initialPosition,
                         markers: _markers,
+                        polylines: _polyLines,
                         onMapCreated: (GoogleMapController controller) {
                           _controller.complete(controller);
                         },
@@ -79,6 +83,24 @@ class _DetailPageState extends State<DetailPage> {
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Text(
+                                "Deskripsi",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                dataODC["deskripsi"].toString(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -93,6 +115,7 @@ class _DetailPageState extends State<DetailPage> {
 
   void _getDetailODC(int id) async {
     try {
+      print("Fetch data");
       SharedPreferences preferences = await SharedPreferences.getInstance();
       double lat = preferences.getDouble("latitude") ?? -7.5589494045543475;
       double long = preferences.getDouble("longitude") ?? 110.85658809673708;
@@ -100,10 +123,6 @@ class _DetailPageState extends State<DetailPage> {
       Map<String, dynamic> _data = await getDetailODC(id);
       setState(() {
         center = currentCenter;
-        _initialPosition = CameraPosition(
-          zoom: 15,
-          target: currentCenter,
-        );
         dataODC = _data;
         isLoading = false;
       });
@@ -135,6 +154,48 @@ class _DetailPageState extends State<DetailPage> {
           icon:
               BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
         ),
+      );
+    });
+    _createRoute(center, _pos);
+    _calculateBoundMap(center, _pos);
+  }
+
+  void _calculateBoundMap(LatLng position, LatLng destination) async {
+    double southWestLatitude = (position.latitude <= destination.latitude)
+        ? position.latitude
+        : destination.latitude;
+    double southWestLongitude = (position.longitude <= destination.longitude)
+        ? position.longitude
+        : destination.longitude;
+    double northEastLatitude = (position.latitude <= destination.latitude)
+        ? destination.latitude
+        : position.latitude;
+    double northEastLongitude = (position.longitude <= destination.longitude)
+        ? destination.longitude
+        : position.longitude;
+
+    final GoogleMapController mapController = await _controller.future;
+    mapController.animateCamera(
+      CameraUpdate.newLatLngBounds(
+          LatLngBounds(
+            southwest: LatLng(southWestLatitude, southWestLongitude),
+            northeast: LatLng(northEastLatitude, northEastLongitude),
+          ),
+          80),
+    );
+  }
+
+  void _createRoute(LatLng position, LatLng destination) async {
+    List<LatLng> points =
+        await _googleMapService.createRoute(position, destination);
+    print(points);
+    setState(() {
+      _polyLines.add(
+        Polyline(
+            polylineId: PolylineId("p2"),
+            width: 4,
+            points: points,
+            color: Colors.red),
       );
     });
   }
