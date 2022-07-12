@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -205,8 +206,11 @@ class _DashboardState extends State<Dashboard> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     double lat = preferences.getDouble("latitude") ?? -7.5589494045543475;
     double long = preferences.getDouble("longitude") ?? 110.85658809673708;
+    // log("abc");
+    // log(lat.toString());
+    // await getNearestODC(lat, long);
     Map<String, dynamic> _data = await getNearestODC(lat, long);
-    print(_data);
+    // log(_data.toString());
     int id = _data["id"] as int;
     Navigator.pushNamedAndRemoveUntil(
         context, "/detail", ModalRoute.withName("/dashboard"),

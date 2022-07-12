@@ -87,6 +87,24 @@ class _DetailPageState extends State<DetailPage> {
                             Container(
                               margin: EdgeInsets.only(top: 10),
                               child: Text(
+                                "Nama ODC",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              child: Text(
+                                dataODC["nama"].toString(),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(top: 10),
+                              child: Text(
                                 "Deskripsi",
                                 style: TextStyle(
                                   fontSize: 16,
@@ -99,6 +117,24 @@ class _DetailPageState extends State<DetailPage> {
                                 dataODC["deskripsi"].toString(),
                                 style: TextStyle(
                                   fontSize: 14,
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[700],
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      "Download File KML",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
                                 ),
                               ),
                             )

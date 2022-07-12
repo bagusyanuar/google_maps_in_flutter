@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:google_maps_in_flutter/dummy/data.dart';
 
@@ -44,12 +46,11 @@ Future<Map<String, dynamic>> getNearestODC(
         latitude.toString() +
         '&longitude=' +
         longitude.toString();
-    final response = await Dio().get(
-      url,
-      options: Options(
-        headers: {"Accept": "application/json"},
-      ),
-    );
+    final response = await Dio().get(url,
+        options: Options(
+          headers: {"Accept": "application/json"},
+        ));
+    log(response.data['payload'].toString());
     _data = response.data["payload"] as Map<String, dynamic>;
   } on DioError catch (e) {
     print(e.message);
