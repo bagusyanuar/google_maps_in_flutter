@@ -53,6 +53,24 @@ Future<Map<String, dynamic>> getNearestODC(
     log(response.data['payload'].toString());
     _data = response.data["payload"] as Map<String, dynamic>;
   } on DioError catch (e) {
+    log(e.response!.data.toString());
+    print(e.message);
+  }
+  return _data;
+}
+
+Future<Map<String, dynamic>> getODCKMLFile(int id) async {
+  Map<String, dynamic> _data = {};
+  try {
+    String url = '$HostAddress/odc/' + id.toString() + '/kml';
+    final response = await Dio().get(
+      url,
+      options: Options(
+        headers: {"Accept": "application/json"},
+      ),
+    );
+    _data = response.data["payload"] as Map<String, dynamic>;
+  } on DioError catch (e) {
     print(e.message);
   }
   return _data;

@@ -206,14 +206,15 @@ class _DashboardState extends State<Dashboard> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     double lat = preferences.getDouble("latitude") ?? -7.5589494045543475;
     double long = preferences.getDouble("longitude") ?? 110.85658809673708;
+    log("testist");
     // log("abc");
     // log(lat.toString());
     // await getNearestODC(lat, long);
     Map<String, dynamic> _data = await getNearestODC(lat, long);
-    // log(_data.toString());
+    log(_data.toString());
     int id = _data["id"] as int;
     Navigator.pushNamedAndRemoveUntil(
         context, "/detail", ModalRoute.withName("/dashboard"),
-        arguments: id);
+        arguments: 2);
   }
 }

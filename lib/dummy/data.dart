@@ -5,7 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 const String ExampleUsername = "root";
 const String ExamplePassword = "password";
 
-const HostAddress = "http://192.168.100.86:8000/api";
+const HostAddress = "http://192.168.100.19:8000/api";
+const HostAddressFile = "http://192.168.100.19:8000";
 
 LatLng ExampleCenter = LatLng(-7.5589494045543475, 110.85658809673708);
 
